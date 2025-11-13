@@ -1,8 +1,10 @@
+import './styles.css';
+
 import OpenAI from 'openai';
 
 const apiKey = import.meta.env.VITE_OPENAI_API_KEY;
 const client = new OpenAI({apiKey: apiKey, dangerouslyAllowBrowser: true});
-const usage_model = 'gpt-3.5-turbo';
+const usage_model = 'o4-mini';
 
 const conversationHistory = [{
   role: 'system',
@@ -12,7 +14,8 @@ const conversationHistory = [{
 
 async function loadInfoFile() {
   try {
-    const response = await fetch('../info.txt');
+    const infoUrl = `${import.meta.env.BASE_URL}info.txt`;
+    const response = await fetch(infoUrl);
     if (!response.ok) {
       throw new Error(`Failed to load info: ${response.status}`);
     }
@@ -69,7 +72,7 @@ async function sendMessage(userMessage) {
 
   try {
     const response = await client.chat.completions.create(
-        {model: usage_model, messages: conversationHistory, max_tokens: 500});
+        {model: usage_model, messages: conversationHistory});
 
     setTyping(false);
     const botMessage = response.choices[0].message.content;
